@@ -26,3 +26,11 @@ npm run test
 npm run lint
 ```
 
+### Runs standard application in electron development mode
+```
+npm run electron:serve
+```
+### Builds electron app
+```
+npm run electron:build
+```
