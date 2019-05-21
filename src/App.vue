@@ -12,7 +12,7 @@
       </b-jumbotron>
     </div>
     <div v-if="!seen">
-      <NavBarMain></NavBarMain>
+      <NavBarMain v-if="false"></NavBarMain>
       <ModalLogin v-on:loginEvent="login" ref="refModalLogin"/>
       <Generator v-on:loginEvent="login" ref="refGenerator"/>
     </div>

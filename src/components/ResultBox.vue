@@ -5,7 +5,7 @@
         <b-form-textarea
         :value="message"
         placeholder="Result of template and CSV row"
-        rows="4"
+        rows="5"
         max-rows="20"
         ></b-form-textarea>
     </b-row> 

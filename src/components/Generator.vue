@@ -19,7 +19,7 @@
         @input="csvchange"
         id="textarea-auto-height"
         placeholder="CSV Content..."
-        rows="4"
+        rows="5"
         max-rows="8"
         ></b-form-textarea>
     </b-row>
@@ -43,7 +43,7 @@
         @input="tmpchange"
         id="textarea-auto-height"
         placeholder="Template file with variables enclosed in <>"
-        rows="4"
+        rows="5"
         max-rows="8"
         ></b-form-textarea>
     </b-row>  
