@@ -1,16 +1,8 @@
 <template>
-  <b-container fluid>
-    <b-row >Result</b-row>
-    <b-row >
-        <b-form-textarea
+  <b-form-textarea
         :value="message"
         placeholder="Result of template and CSV row"
-        rows="5"
-        max-rows="20"
-        ></b-form-textarea>
-    </b-row> 
-  </b-container>
- 
+        ></b-form-textarea> 
 </template>
 
 <script>

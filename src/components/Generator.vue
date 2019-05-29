@@ -1,78 +1,93 @@
 <template>
 <b-container fluid>
-    <b-row class="m-1">
-        <b-col class="p-0">
-            <b-form-file
-                @change="loadFileCSV"
-                v-model="filecsv"
-                placeholder="CSV file..."
-                drop-placeholder="Drop file here..."
-            ></b-form-file>            
-        </b-col>
-        <b-col class="p-0" cols="1">
-            <b-button class="float-left" @click="filecsv=null">reset</b-button>
-        </b-col>
-    </b-row>
-    <b-row class="m-1">
-        <b-form-textarea
-        :value="csvtext"
-        @input="csvchange"
-        id="textarea-auto-height"
-        placeholder="CSV Content..."
-        rows="5"
-        max-rows="8"
-        ></b-form-textarea>
-    </b-row>
-    <b-row class="m-1">
-        <b-col class="p-0">
-            <b-form-file
-            @change="loadFileTemplate"
-            v-model="filetmp"
-            placeholder="Template file..."
-            drop-placeholder="Drop file here..."
-            ></b-form-file>
-        </b-col>
-        <b-col class="p-0" cols="1">
-            <b-button class="float-left" @click="filetmp=null">reset</b-button>
-        </b-col>
-
-    </b-row>
-    <b-row class="m-1">
-        <b-form-textarea
-        :value="template"
-        @input="tmpchange"
-        id="textarea-auto-height"
-        placeholder="Template file with variables enclosed in <>"
-        rows="5"
-        max-rows="8"
-        ></b-form-textarea>
-    </b-row>  
-    <b-row class="m-1">
-        <result-box
-            :message="results[currentPage-1].result"
-        ></result-box>    
-        <div class="overflow-auto"> 
-            <!-- Use text in props -->
-            <b-pagination
-            class="mb-0"
-            v-model="currentPage"
-            :total-rows="rows"
-            :per-page="perPage"
-            first-text="First"
-            prev-text="Prev"
-            next-text="Next"
-            last-text="Last"
-            ></b-pagination>
-        </div> 
-        <b-dropdown variant="primary" right text="Save">
-            <b-dropdown-item @click="saveFile('template.csv', csvtext)">Save CSV table</b-dropdown-item>
-            <b-dropdown-item @click="saveFile('template.txt', template)">Save template</b-dropdown-item>
-            <b-dropdown-item @click="saveZipFiles('results.zip', results)">Save results in ZIP</b-dropdown-item>
-            <b-dropdown-item @click="saveMrgFiles('merged.txt', results)">Save results merged</b-dropdown-item>
-            <b-dropdown-divider v-if="false"></b-dropdown-divider>
-            <b-dropdown-item v-if="false">Save all in ZIP</b-dropdown-item>
-        </b-dropdown>  
-    </b-row>
+    <b-container fluid class="disp-flex-vertical">
+        <b-row v-if='visible_csv' class="flex-fix"><label class='mt-2'>CSV Table</label></b-row>
+        <b-row v-if='visible_csv' :class="csvclass">
+            <b-form-textarea
+            :class="csvclass"
+            :value="csvtext"
+            @input="csvchange"
+            id="textarea-auto-height"
+            placeholder="Enter CSV formatted text here..."
+            rows = 5
+            ></b-form-textarea>
+        </b-row >
+        <b-row v-if='visible_csv' class="flex-fix">
+            <b-button-group>
+                <label class="btn btn-outline-primary m-0">Load
+                    <input 
+                    type="file"
+                    @change="loadFileCSV"
+                    :value="filecsv"
+                    style="display: none;">
+                </label>    
+                <b-button variant="outline-primary" class="float-left" @click="csvtext=''">Clear</b-button>
+            </b-button-group>
+        </b-row>
+        <b-row v-if='visible_tmp || visible_results' class="flex-auto">
+            <b-col  v-if='visible_tmp' class='p-0'>
+                <div class="disp-flex-vertical">
+                    <div align='left' class="flex-fix">
+                        <label class='mt-2'>Template</label>
+                    </div>
+                        <b-form-textarea
+                            class="flex-auto"
+                            :value="template"
+                            @input="tmpchange"
+                            id="textarea-auto-height"
+                            placeholder="Template file with variables enclosed in <>"
+                            rows="5">
+                        </b-form-textarea>
+                    <div align='left' class="flex-fix">
+                        <b-button-group>
+                            <label class="btn btn-outline-primary m-0">Load
+                                <input 
+                                type="file"
+                                @change="loadFileTemplate"
+                                :value="filetmp"
+                                style="display: none;">
+                            </label>    
+                            <b-button variant="outline-primary" class="float-left" @click="template=''">Reset</b-button>
+                        </b-button-group>
+                    </div>
+                </div>
+            </b-col>
+            <b-col  v-if='visible_results' class='p-0'>
+                <div class="disp-flex-vertical">
+                    <div align='left' class="flex-fix">
+                        <label class='mt-2'>Results</label>
+                    </div>
+                    <!-- <b-form-textarea class="flex-auto"></b-form-textarea> -->
+                    <result-box class='flex-auto' :message="currentResult"></result-box>
+                    <div align='left' class="flex-fix">
+                        <b-row align-h="between">
+                            <b-dropdown class='ml-3' variant="outline-primary" right text="Save">
+                                <b-dropdown-item @click="saveFile('template.csv', csvtext)">Save CSV table</b-dropdown-item>
+                                <b-dropdown-item @click="saveFile('template.txt', template)">Save template</b-dropdown-item>
+                                <b-dropdown-item @click="saveZipFiles('results.zip', results)">Save results in ZIP</b-dropdown-item>
+                                <b-dropdown-item @click="saveMrgFiles('merged.txt', results)">Save results merged</b-dropdown-item>
+                                <b-dropdown-divider v-if="false"></b-dropdown-divider>
+                                <b-dropdown-item v-if="false">Save all in ZIP</b-dropdown-item>
+                            </b-dropdown>                                       
+                            <div class="overflow-auto mr-3"> 
+                                <b-pagination
+                                class="mb-0"
+                                v-model="currentPage"
+                                :total-rows="rows"
+                                :per-page="perPage"
+                                first-text="First"
+                                prev-text="Prev"
+                                next-text="Next"
+                                last-text="Last"
+                                ></b-pagination>                   
+                            </div>                                
+                        </b-row>
+                    </div>
+                </div>
+            </b-col>
+            
+        </b-row>
+    </b-container>
 </b-container>
 </template>
 
@@ -81,6 +96,7 @@ const csvj=require('csvtojson/v2')
 const JSZip=require('jszip')
 import { saveAs } from 'file-saver';
 import ResultBox from './ResultBox.vue'
+
 
 export default {
   name: 'Generator',
@@ -104,17 +120,58 @@ export default {
       rows: 1,
       currentPage: 1,
       perPage: 1,
-      results: [{results: ""}]
+      results: [{result: ""}],
+      visible_csv: true,
+      visible_tmp: true,
+      visible_results: true
     }
   },
+    computed: {
+        currentResult: function(){
+            let r = this.results[this.currentPage-1].result
+            return r
+        },
+        csvclass: function(){
+            if ( this.visible_results || this.visible_tmp) {
+                return "flex-fix"
+            } else{
+                return "flex-auto"
+            }
+        }
+  },
   methods:{
+    test: function(){
+        console.log('Test function run!')
+    },
     csvchange: function(v){
+        let _this = this
         this.csvtext = v
         this.computeResults()
+        .then((success)=>{
+            if (! success){
+                // console.log("CSV Change failed")
+                _this.results = [{result: _this.template}]
+            }
+            else{
+                // console.log("CSV Change success")
+            }
+
+        })
     },
     tmpchange: function(t){
+        let _this = this
         this.template = t
         this.computeResults()
+        .then((success)=>{
+            if (! success){
+                // console.log("CSV Change failed")
+                _this.results = [{result: _this.template}]
+            }
+            else{
+                // console.log("CSV Change success")
+            }
+
+        })
     },
     computeResults(){
         return csvj().fromString(this.csvtext)
@@ -123,10 +180,6 @@ export default {
             if (array.length){
                 this.rows = array.length
             }else{
-                this.results = [{results: ""}]
-                this.rows= 1
-                this.currentPage= 1
-                this.perPage= 1
                 return false;
             }
             for( let i = 0 ; i< array.length; i++){
@@ -144,6 +197,7 @@ export default {
                 newresult.push({result: result, name:name})
             }
             this.results = newresult
+            return true
         })   
     },
     saveFile: function(filename,text) {
@@ -208,7 +262,19 @@ export default {
   },
   mounted: function () {
     this.$nextTick(() => {
-      this.computeResults()
+        this.computeResults()
+    })
+    this.$root.$on('checkedtmpEvent', (event) => {
+        // console.log("Generator", event)
+        this.visible_tmp = !event;
+    })
+    this.$root.$on('checkedcsvEvent', (event) => {
+        // console.log("Generator", event)
+        this.visible_csv = !event;
+    })
+    this.$root.$on('checkedresultsEvent', (event) => {
+        // console.log("Generator", event)
+        this.visible_results = !event;
     })
   }
 }
@@ -216,4 +282,28 @@ export default {
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped>
+.disp-flex-vertical {
+  display: flex;
+  flex-flow: column;
+  height: 100%;
+}
+.disp-flex-horizontal {
+  display: flex;
+  flex-flow: row;
+  width: 100%;
+}
+
+.flex-fix {
+  /* border: 1px dotted grey; */
+  flex-grow: 0;
+  flex-shrink: 0;
+  flex-basis: auto;
+}
+
+.flex-auto {
+  /* border: 1px dotted grey; */
+  flex-grow: 1;
+  flex-shrink: 1;
+  flex-basis: auto;
+}
 </style>

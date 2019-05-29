@@ -1,22 +1,20 @@
 <template>
-  <div id="app" class="m-0">
-    <div>
-      <b-jumbotron 
-        v-if="seen"
-        header="CSV Templater"
-        lead="Generate text files by combining rows from a CSV file with a template">
-        <b-button 
-          variant="primary"
-          @click='begin'
-        >Begin</b-button>
-      </b-jumbotron>
-    </div>
-    <div v-if="!seen">
-      <NavBarMain v-if="false"></NavBarMain>
-      <ModalLogin v-on:loginEvent="login" ref="refModalLogin"/>
-      <Generator v-on:loginEvent="login" ref="refGenerator"/>
-    </div>
-
+  <div id="app" class="disp-flex-vertical m-0">
+    <ModalLogin v-on:loginEvent="login" ref="refModalLogin"/>
+    <!-- <b-jumbotron 
+      v-if="seen"
+      header="CSV Templater"
+      lead="Generate text files by combining rows from a CSV file with a template">
+      <b-button 
+        variant="primary"
+        @click='begin'
+      >Begin</b-button>
+    </b-jumbotron> -->
+    <NavBarMain class="flex-fix"
+      v-on:checkedtmpEvent2="checkedtmpEvent"
+      v-if="true">
+    </NavBarMain>
+    <Generator class=flex-auto v-on:loginEvent="login" csvon="csvon" ref="refGenerator"/>
   </div>
 </template>
 
@@ -30,10 +28,20 @@ export default {
   components: {
     ModalLogin,Generator,NavBarMain
   },
-  data: function(){ return {seen: true}},
+  data: function(){ 
+    return {
+      seen: true,
+      csvon: true
+    }
+  },
   methods: {
     login: function(value){
       console.log("Main", value)
+
+    },
+    checkedtmpEvent: function(value){
+      console.log("checkedtmpEvent", value)
+      this.csvon = value
 
     },
     begin: function(){
@@ -53,12 +61,46 @@ export default {
 </script>
 
 <style>
+html,
+body {
+  height: 100%;
+  width: 100%;
+  margin: 0
+}
+
 #app {
   font-family: 'Avenir', Helvetica, Arial, sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   text-align: center;
   color: #2c3e50;
-  margin-top: 60px;
+  height: 100%;
+  width: 100%;
 }
+
+.disp-flex-vertical {
+  display: flex;
+  flex-flow: column;
+  height: 100%;
+}
+.disp-flex-horizontal {
+  display: flex;
+  flex-flow: row;
+  height: 100%;
+}
+
+.flex-fix {
+  /* border: 1px dotted grey; */
+  flex-grow: 0;
+  flex-shrink: 0;
+  flex-basis: auto;
+}
+
+.flex-auto {
+  /* border: 1px dotted grey; */
+  flex-grow: 1;
+  flex-shrink: 1;
+  flex-basis: auto;
+}
+
 </style>

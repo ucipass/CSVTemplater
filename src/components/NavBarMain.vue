@@ -13,17 +13,26 @@
             <b-dropdown-item href="#">Show - Template Only</b-dropdown-item>
             <b-dropdown-item href="#">Show - Results Only</b-dropdown-item>
           </b-nav-item-dropdown>
-          <b-form-checkbox v-if="false"
+          <b-form-checkbox v-if="true"
             v-model="checkedcsv"
+            @change="checkedcsvEvent"
             name="check-button"
             switch class='text-light m-2'>
             CSV
           </b-form-checkbox>
-          <b-form-checkbox v-if="false"
-            v-model="checkedtmp"
+          <b-form-checkbox v-if="true"
+            v-model="checkedtmp" 
+            @change="checkedtmpEvent"
             name="check-button"
             switch class='text-light m-2'>
             Template
+          </b-form-checkbox>
+          <b-form-checkbox v-if="true"
+            v-model="checkedresults"
+            @change="checkedresultsEvent"
+            name="check-button"
+            switch class='text-light m-2'>
+            Results
           </b-form-checkbox>
         </b-navbar-nav>
 
@@ -57,11 +66,23 @@ export default {
   data: function(){
     return{
       checkedcsv: true,
-      checkedtmp: true
+      checkedtmp: true,
+      checkedresults: true
     }
   },
   methods:{
-
+    testfn: function(){
+      console.log("TEST")
+    },
+    checkedtmpEvent: function(){
+      this.$root.$emit('checkedtmpEvent', this.checkedtmp )
+    },
+    checkedcsvEvent: function(){
+      this.$root.$emit('checkedcsvEvent', this.checkedcsv )
+    },
+    checkedresultsEvent: function(){
+      this.$root.$emit('checkedresultsEvent', this.checkedresults )
+    }
   },
   mounted: function () {
     // this.$nextTick(() => {
