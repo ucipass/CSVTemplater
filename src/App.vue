@@ -1,15 +1,6 @@
 <template>
   <div id="app" class="disp-flex-vertical m-0">
     <ModalLogin v-on:loginEvent="login" ref="refModalLogin"/>
-    <!-- <b-jumbotron 
-      v-if="seen"
-      header="CSV Templater"
-      lead="Generate text files by combining rows from a CSV file with a template">
-      <b-button 
-        variant="primary"
-        @click='begin'
-      >Begin</b-button>
-    </b-jumbotron> -->
     <NavBarMain class="flex-fix"
       v-on:checkedtmpEvent2="checkedtmpEvent"
       v-if="true">
@@ -50,6 +41,7 @@ export default {
     }
   },
   mounted: function(){
+    document.title = "CSVTemplater"
     // console.log("APP STARTED!" )
     //     this.$nextTick(() => {
     //   this.$refs.refModalLogin.show()

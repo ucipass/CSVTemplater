@@ -1,14 +1,14 @@
 <template>
 <b-container fluid>
     <b-container fluid class="disp-flex-vertical">
-        <b-row v-if='visible_csv' class="flex-fix"><label class='mt-2'>CSV Table</label></b-row>
+        <b-row v-if='visible_csv' class="flex-fix"><label class='mt-3 mb-0 text-primary'>CSV Table</label></b-row>
         <b-row v-if='visible_csv' :class="csvclass">
             <b-form-textarea
             :class="csvclass"
             :value="csvtext"
             @input="csvchange"
             id="textarea-auto-height"
-            placeholder="Enter CSV formatted text here..."
+            placeholder="CSV formatted text"
             rows = 5
             ></b-form-textarea>
         </b-row >
@@ -28,18 +28,18 @@
             <b-col  v-if='visible_tmp' class='p-0'>
                 <div class="disp-flex-vertical">
                     <div align='left' class="flex-fix">
-                        <label class='mt-2'>Template</label>
+                        <label class='mt-3 mb-0 text-primary'>Template</label>
                     </div>
                         <b-form-textarea
                             class="flex-auto"
                             :value="template"
                             @input="tmpchange"
                             id="textarea-auto-height"
-                            placeholder="Template file with variables enclosed in <>"
+                            placeholder="Template text with variables enclosed in <>"
                             rows="5">
                         </b-form-textarea>
                     <div align='left' class="flex-fix">
-                        <b-button-group>
+                        <b-button-group class='mb-3'>
                             <label class="btn btn-outline-primary m-0">Load
                                 <input 
                                 type="file"
@@ -47,7 +47,7 @@
                                 :value="filetmp"
                                 style="display: none;">
                             </label>    
-                            <b-button variant="outline-primary" class="float-left" @click="template=''">Reset</b-button>
+                            <b-button variant="outline-primary" class="float-left" @click="template=''">Clear</b-button>
                         </b-button-group>
                     </div>
                 </div>
@@ -55,30 +55,37 @@
             <b-col  v-if='visible_results' class='p-0'>
                 <div class="disp-flex-vertical">
                     <div align='left' class="flex-fix">
-                        <label class='mt-2'>Results</label>
+                        <label class='mt-3 mb-0 text-primary'>Results</label>
                     </div>
                     <!-- <b-form-textarea class="flex-auto"></b-form-textarea> -->
                     <result-box class='flex-auto' :message="currentResult"></result-box>
                     <div align='left' class="flex-fix">
-                        <b-row align-h="between">
-                            <b-dropdown class='ml-3' variant="outline-primary" right text="Save">
-                                <b-dropdown-item @click="saveFile('template.csv', csvtext)">Save CSV table</b-dropdown-item>
-                                <b-dropdown-item @click="saveFile('template.txt', template)">Save template</b-dropdown-item>
-                                <b-dropdown-item @click="saveZipFiles('results.zip', results)">Save results in ZIP</b-dropdown-item>
-                                <b-dropdown-item @click="saveMrgFiles('merged.txt', results)">Save results merged</b-dropdown-item>
-                                <b-dropdown-divider v-if="false"></b-dropdown-divider>
-                                <b-dropdown-item v-if="false">Save all in ZIP</b-dropdown-item>
-                            </b-dropdown>                                       
-                            <div class="overflow-auto mr-3"> 
+                        <b-row class='ml-0 mb-3' align-h="between">
+                            <b-button-group >
+                                <b-dropdown  variant="outline-primary" right text="Save">
+                                    <b-dropdown-item @click="saveFile('template.csv', csvtext)">Save CSV table</b-dropdown-item>
+                                    <b-dropdown-item @click="saveFile('template.txt', template)">Save template</b-dropdown-item>
+                                    <b-dropdown-item @click="saveZipFiles('results.zip', results)">Save results in ZIP</b-dropdown-item>
+                                    <b-dropdown-item @click="saveMrgFiles('merged.txt', results)">Save merged results</b-dropdown-item>
+                                    <b-dropdown-divider v-if="false"></b-dropdown-divider>
+                                    <b-dropdown-item v-if="false">Save all in ZIP</b-dropdown-item>
+                                </b-dropdown>
+                                    <b-button 
+                                        @click="merged =! merged" 
+                                        :variant="merged ? 'primary' : 'outline-primary'"
+                                        >{{ merged ? "Unmerge" : "Merge"}}
+                                    </b-button>
+                            </b-button-group>
+                            <div class="overflow-auto mr-3" v-if="merged ? false : true" > 
                                 <b-pagination
                                 class="mb-0"
                                 v-model="currentPage"
                                 :total-rows="rows"
                                 :per-page="perPage"
-                                first-text="First"
-                                prev-text="Prev"
-                                next-text="Next"
-                                last-text="Last"
+                                first-text="<<"
+                                prev-text="<"
+                                next-text=">"
+                                last-text=">>"
                                 ></b-pagination>                   
                             </div>                                
                         </b-row>
@@ -113,8 +120,8 @@ export default {
     return{
       username: 'myuser',
       password: 'mypass',
-      csvtext: "name,index,ip,mask\nR1,1/1,1.1.1.1,255.255.255.0\nR2,1/2,1.1.2.1,255.255.255.0\nR3,1/3,1.1.3.1,255.255.255.0",
-      template: "interface Ethernet<index>\n desciption <name>\n ip address <ip> <mask> \n",
+      csvtext: "",
+      template: "",
       filecsv: "",
       filetmp: "",
       rows: 1,
@@ -123,13 +130,26 @@ export default {
       results: [{result: ""}],
       visible_csv: true,
       visible_tmp: true,
-      visible_results: true
+      visible_results: true,
+      merged: false
     }
   },
     computed: {
         currentResult: function(){
-            let r = this.results[this.currentPage-1].result
-            return r
+            if (this.template == "") {
+                return ""
+            }
+            if (this.merged){
+                let mergedText = ""
+                for(let i = 0; i<this.results.length; i++){
+                    let file = this.results[i]
+                    mergedText +=file.result
+                }
+                return mergedText
+            }else{
+                let r = this.results[this.currentPage-1].result
+                return r                
+            }
         },
         csvclass: function(){
             if ( this.visible_results || this.visible_tmp) {
@@ -276,6 +296,12 @@ export default {
         // console.log("Generator", event)
         this.visible_results = !event;
     })
+    this.$root.$on('loadExample1Event', (event) => {
+        console.log("Example", event)
+        this.template = "interface Ethernet<index>\n desciption <name>\n ip address <ip> <mask> \n";
+        this.csvtext = "name,index,ip,mask\nR1,1/1,1.1.1.1,255.255.255.0\nR2,1/2,1.1.2.1,255.255.255.0\nR3,1/3,1.1.3.1,255.255.255.0\n";
+        this.computeResults()
+    })
   }
 }
 </script>
@@ -287,6 +313,7 @@ export default {
   flex-flow: column;
   height: 100%;
 }
+
 .disp-flex-horizontal {
   display: flex;
   flex-flow: row;

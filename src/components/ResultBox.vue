@@ -1,7 +1,7 @@
 <template>
   <b-form-textarea
         :value="message"
-        placeholder="Result of template and CSV row"
+        placeholder="Results of the template and CSV rows combined"
         ></b-form-textarea> 
 </template>
 
