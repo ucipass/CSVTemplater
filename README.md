@@ -1,5 +1,8 @@
 # CSV Templater
-Generate text files by combining rows from a CSV file with a template
+Generate text files by combining rows from a CSV file with a template. The compiled program can be found in the bingary directory and need to be installed.
+
+## Example - Animated Gif
+![Alt Text](CSVTemplater.gif)
 
 ## Project setup
 ```
