@@ -2,7 +2,7 @@
 Generate text files by combining rows from a CSV file with a template. The compiled program can be found in the bingary directory and need to be installed.
 
 ## Example - Animated Gif
-![Alt Text](CSVTemplater.gif)
+![Alt Text](CSVTemplater_animated.gif)
 
 ## Project setup
 ```
